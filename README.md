@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/Sapienza-University%20of%20Rome-8B0000?style=for-the-badge&logo=academia&logoColor=white"/>
+<img src="https://img.shields.io/static/v1?label=University&message=Sapienza%20University%20of%20Rome&color=8B0000&style=for-the-badge&logoColor=white"/>
 <img src="https://img.shields.io/badge/MSc-Computer%20Science-1a1a2e?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Academic%20Year-2025%2F2026-4a4e69?style=for-the-badge"/>
 
@@ -12,8 +12,12 @@
 
 <br/>
 
-**Candidate:** Swati Aggrawal &nbsp;·&nbsp; **ID:** 2118031  
-**Thesis Advisor:** Prof. Marco Raoul Marini  
+**Candidate:** Swati Aggrawal &nbsp;·&nbsp; **Matricola:** 2118031  
+
+**Thesis Advisor:** Prof. Maria De Marsico
+
+**Thesis Co-Advisor:** Prof. Marco Raoul Marini
+
 **Faculty:** Ingegneria dell'Informazione, Informatica e Statistica
 
 <br/>
@@ -58,21 +62,21 @@ The approach combines three complementary mechanisms operating at different leve
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│              Frozen ViT-Tiny Backbone                │  ← Preserves shared
-│         (5.85M params, ImageNet pre-trained)         │    visual knowledge
-│  ┌───────────────────────────────────────────────┐   │
-│  │  Transformer Block × 12                       │   │
-│  │  ┌─────────────────┐   ┌──────────────────┐   │   │
-│  │  │  Self-Attention │   │  Feed-Forward    │   │   │
-│  │  └────────┬────────┘   └────────┬─────────┘   │   │
-│  │           └──────────┬──────────┘              │   │
-│  │                      ▼                         │   │
-│  │  ┌─────────────────────────────────────────┐   │   │
-│  │  │  🔌 Bottleneck Adapter (192→64→192)     │   │   │  ← Task-specific
-│  │  │   LayerNorm → Linear → GELU → Linear    │   │   │    learning (~5.5%
-│  │  │              + Residual                 │   │   │    of all params)
-│  │  └─────────────────────────────────────────┘   │   │
-│  └───────────────────────────────────────────────┘   │
+│              Frozen ViT-Tiny Backbone               │  ← Preserves shared
+│         (5.85M params, ImageNet pre-trained)        │    visual knowledge
+│  ┌───────────────────────────────────────────────┐  │
+│  │  Transformer Block × 12                       │  │
+│  │  ┌─────────────────┐   ┌──────────────────┐   │  │
+│  │  │  Self-Attention │   │  Feed-Forward    │   │  │
+│  │  └────────┬────────┘   └────────┬─────────┘   │  │
+│  │           └──────────┬──────────┘             │  │
+│  │                      ▼                        │  │
+│  │  ┌─────────────────────────────────────────┐  │  │
+│  │  │     Bottleneck Adapter (192→64→192)     │  │  │  ← Task-specific
+│  │  │   LayerNorm → Linear → GELU → Linear    │  │  │    learning (~5.5%
+│  │  │              + Residual                 │  │  │    of all params)
+│  │  └─────────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────┘
                           │
               EWC Regularization (λ=1000)
@@ -102,23 +106,17 @@ thesis-vit-continual-learning/
 │   ├── Thesis_Updated_Draft_Latex_2118031.pdf
 │   └── (LaTeX source files)
 │
-├── 🧪 experiments/
-│   ├── models/
-│   │   ├── resnet_baseline.py        # ResNet-18 naive fine-tuning
-│   │   ├── vit_baseline.py           # ViT-Tiny naive fine-tuning
-│   │   ├── vit_adapter.py            # ViT + frozen backbone + adapters
-│   │   └── vit_adapter_ewc.py        # ViT + adapters + EWC ⭐
-│   ├── training/
-│   │   ├── train.py                  # Main training script
-│   │   └── dataset.py                # Split CIFAR-100 data loader
-│   └── evaluation/
-│       └── metrics.py                # ACC, F_avg, BWT computation
+├── 🧪 experiments/ 
+│   ├── VITCL_baseline.ipynb           # ResNet-18 and ViT-Tiny naive fine-tuning
+│   ├── VITCL_adapters.ipynb           # ViT + frozen backbone + adapters
+│   ├── VITCL_adapters_ewc.ipynb           # ViT + adapters + EWC ⭐
+│   ├── VITCL_adapters_ewc_crossval.ipynb  # ViT + adapters + EWC with cross-validation⭐
+│   └── VITCL_ablation_study_graphs.ipynb        # Ablation study
 │
-├── 📊 results/
-│   ├── figures/                      # Accuracy curves, heatmaps, ablation charts
-│   └── tables/                       # Numerical results (CSV/JSON)
-│
-└── 📚 docs/
+└──  📊 results/
+      ├── figures/                      # Accuracy curves, heatmaps, ablation charts
+      └── tables/                       # Numerical results 
+
 ```
 
 ---
@@ -146,23 +144,26 @@ thesis-vit-continual-learning/
 
 ## 🚀 Quick Start
 
-```bash
-# Clone the repo
-git clone https://github.com/your-username/thesis-vit-continual-learning
-cd thesis-vit-continual-learning
+```markdown
+This project is implemented using five Google Colab notebooks. To reproduce the experiments, open the notebooks in the `notebooks/` folder and run them in the following order:
 
-# Install dependencies
-pip install -r requirements.txt
+1. `VITCL_baseline.ipynb`
+2. `VITCL_adapters.ipynb`
+3. `VITCL_adapters_ewc.ipynb`
+4. `VITCL_adapter_ewc_crossval.ipynb`
+5. `VITCL_ablation_study_graphs.ipynb`
 
-# Run the best configuration
-python experiments/training/train.py --model vit_adapter_ewc --seed 42
+Each notebook contains the required setup and dependency installation commands. For best results, run the notebooks in Google Colab with GPU enabled:
 
-# Run full ablation (all four configurations)
-for model in resnet18 vit_tiny vit_adapter vit_adapter_ewc; do
-    python experiments/training/train.py --model $model --seed 42
-done
+**Runtime → Change runtime type → GPU**
+
+The notebooks reproduce the four main configurations used in the thesis:
+
+- ResNet-18 baseline
+- ViT-Tiny baseline
+- ViT-Tiny with adapters
+- ViT-Tiny with adapters and EWC
 ```
-
 ---
 
 ## 📊 Ablation Chain
@@ -173,7 +174,7 @@ Each component contributes measurably — no single piece alone achieves the res
 ResNet-18          ████░░░░░░░░░░░░░░░░  24.22%  forgetting: 69.17%
 ViT-Tiny           ████████░░░░░░░░░░░░  41.91%  forgetting: 63.26%
 ViT + Adapters     ███████████████░░░░░  76.93%  forgetting: 19.91%
-ViT + Adapt + EWC  █████████████████░░░  90.59%  forgetting:  2.01% ✅
+ViT + Adapt + EWC  ██████████████████░░  90.59%  forgetting:  2.01% ✅
 ```
 
 ---
@@ -189,21 +190,6 @@ ViT + Adapt + EWC  █████████████████░░░ 
 | [DualPrompt (Wang et al., 2022)](https://arxiv.org/abs/2204.04799) | Task/general prompts | Larger backbone (ViT-B/16, ImageNet-21K) |
 
 > ⚠️ **Note on comparisons:** L2P and DualPrompt use ViT-B/16 (86M params, ImageNet-21K) under CIL — direct numerical comparison with this work is not appropriate due to differences in backbone, scenario, and pre-training data.
-
----
-
-## 📬 Citation
-
-```bibtex
-@mastersthesis{aggrawal2026vit_cl,
-  author   = {Swati Aggrawal},
-  title    = {Evaluating Pre-Trained Vision Transformers Under Continual Learning},
-  school   = {Sapienza -- University of Rome},
-  year     = {2026},
-  advisor  = {Prof. Marco Raoul Marini},
-  program  = {MSc Computer Science}
-}
-```
 
 ---
 
